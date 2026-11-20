@@ -24,6 +24,7 @@ directory if needed).
 import hashlib
 import os
 import shutil
+import struct
 import sys
 from pathlib import Path
 
@@ -34,6 +35,25 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _check_png_header(path: Path) -> None:
+    """Verify entry.png is a real 1024x1024 PNG, not just the right bytes.
+
+    Reads the 8-byte PNG signature and the IHDR chunk's width/height
+    with the standard library only; raises RuntimeError on any mismatch.
+    """
+    with path.open("rb") as f:
+        header = f.read(33)
+    if len(header) < 33 or header[:8] != b"\x89PNG\r\n\x1a\n":
+        raise RuntimeError(f"{path.name} is not a PNG file: bad magic bytes")
+    if header[12:16] != b"IHDR":
+        raise RuntimeError(f"{path.name} is not a PNG file: missing IHDR chunk")
+    width, height = struct.unpack(">II", header[16:24])
+    if (width, height) != (1024, 1024):
+        raise RuntimeError(
+            f"{path.name} has wrong dimensions: {width}x{height}, expected 1024x1024"
+        )
 
 
 def main() -> int:
@@ -52,6 +72,9 @@ def main() -> int:
     # corrupted copy must not pass the size check silently.
     if _sha256(out_path) != _sha256(src):
         raise RuntimeError("entry.png copy failed integrity check: SHA-256 mismatch")
+    # Verify the copied image is really a 1024x1024 PNG, not just the
+    # right bytes: a corrupt header must fail loudly, not ship silently.
+    _check_png_header(out_path)
     return 0
 
 
