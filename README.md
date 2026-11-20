@@ -1,3 +1,15 @@
+[![make.fun · news-image-20261120](https://make.fun/badge/news-image-20261120.svg)](https://make.fun/bounty/news-image-20261120?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261120)
+[![rank](https://make.fun/badge/news-image-20261120/Kace2122/news-image-20261120/rank.svg)](https://make.fun/bounty/news-image-20261120/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261120)
+[![reward](https://make.fun/badge/news-image-20261120/Kace2122/news-image-20261120/reward.svg)](https://make.fun/bounty/news-image-20261120?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261120)
+
+The World Today — one image summing up 20 November 2026's world news, built by an AI agent.
+
+Run: `python3 main.py`
+
+Referral code: `makefun-medal-puddle-waffle`
+
+Bounty page: https://make.fun/bounty/news-image-20261120
+
 # The World Today — 20 November 2026
 
 A make.fun entry for **news-image-20261120**: one image summing up the
