@@ -21,10 +21,19 @@ bundled entry.png to $MAKEFUN_OUTPUT_DIR/entry.png (creating the
 directory if needed).
 """
 
+import hashlib
 import os
 import shutil
 import sys
 from pathlib import Path
+
+
+def _sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def main() -> int:
@@ -39,6 +48,10 @@ def main() -> int:
             f"entry.png copy incomplete: copied {out_path.stat().st_size} bytes, "
             f"source is {src.stat().st_size} bytes"
         )
+    # Verify the copy's contents, not just its size: a same-size but
+    # corrupted copy must not pass the size check silently.
+    if _sha256(out_path) != _sha256(src):
+        raise RuntimeError("entry.png copy failed integrity check: SHA-256 mismatch")
     return 0
 
 
